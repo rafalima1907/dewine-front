@@ -2,13 +2,13 @@ export const initDatabase = async (db) => {
   await db.execAsync(`
         PRAGMA foreign_keys = ON;
 
-CREATE TABLE cliente (
+CREATE TABLE IF NOT EXISTS cliente (
     id_cliente INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
     cpf TEXT UNIQUE NOT NULL
 );
 
-CREATE TABLE telefone (
+CREATE TABLE IF NOT EXISTS telefone (
     id_telefone INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL,
     numero TEXT NOT NULL,
@@ -17,9 +17,9 @@ CREATE TABLE telefone (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_telefone_cliente ON telefone(id_cliente);
+CREATE INDEX IF NOT EXISTS idx_telefone_cliente ON telefone(id_cliente);
 
-CREATE TABLE email (
+CREATE TABLE IF NOT EXISTS email (
     id_email INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL,
     email TEXT NOT NULL,
@@ -29,9 +29,9 @@ CREATE TABLE email (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_email_cliente ON email(id_cliente);
+CREATE INDEX IF NOT EXISTS idx_email_cliente ON email(id_cliente);
 
-CREATE TABLE endereco (
+CREATE TABLE IF NOT EXISTS endereco (
     id_endereco INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL,
     cep TEXT NOT NULL,
@@ -45,10 +45,10 @@ CREATE TABLE endereco (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_endereco_cliente ON endereco(id_cliente);
+CREATE INDEX IF NOT EXISTS idx_endereco_cliente ON endereco(id_cliente);
 
 
-CREATE TABLE produtos (
+CREATE TABLE IF NOT EXISTS produtos (
     id_produto INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
     categoria TEXT,
@@ -57,9 +57,9 @@ CREATE TABLE produtos (
     estoque INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE INDEX idx_produtos_nome ON produtos(nome);
+CREATE INDEX IF NOT EXISTS idx_produtos_nome ON produtos(nome);
 
-CREATE TABLE produto_imagens (
+CREATE TABLE IF NOT EXISTS produto_imagens (
     id_imagem INTEGER PRIMARY KEY AUTOINCREMENT,
     id_produto INTEGER NOT NULL,
     url TEXT NOT NULL,
@@ -70,9 +70,9 @@ CREATE TABLE produto_imagens (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_imagem_produto ON produto_imagens(id_produto);
+CREATE INDEX IF NOT EXISTS idx_imagem_produto ON produto_imagens(id_produto);
 
-CREATE TABLE compras (
+CREATE TABLE IF NOT EXISTS compras (
     id_compra INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL,
     id_endereco INTEGER NOT NULL,
@@ -87,9 +87,9 @@ CREATE TABLE compras (
         REFERENCES endereco(id_endereco)
 );
 
-CREATE INDEX idx_compras_cliente ON compras(id_cliente);
+CREATE INDEX IF NOT EXISTS idx_compras_cliente ON compras(id_cliente);
 
-CREATE TABLE itens_compra (
+CREATE TABLE IF NOT EXISTS itens_compra (
     id_item INTEGER PRIMARY KEY AUTOINCREMENT,
     id_compra INTEGER NOT NULL,
     id_produto INTEGER NOT NULL,
@@ -102,11 +102,11 @@ CREATE TABLE itens_compra (
         REFERENCES produtos(id_produto)
 );
 
-CREATE INDEX idx_itens_compra_compra ON itens_compra(id_compra);
-CREATE INDEX idx_itens_compra_produto ON itens_compra(id_produto);
+CREATE INDEX IF NOT EXISTS idx_itens_compra_compra ON itens_compra(id_compra);
+CREATE INDEX IF NOT EXISTS idx_itens_compra_produto ON itens_compra(id_produto);
 
 
-CREATE TABLE favoritos (
+CREATE TABLE IF NOT EXISTS favoritos (
     id_favorito INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL,
     id_produto INTEGER NOT NULL,
@@ -119,7 +119,7 @@ CREATE TABLE favoritos (
     UNIQUE (id_cliente, id_produto)
 );
 
-CREATE TABLE feedback (
+CREATE TABLE IF NOT EXISTS feedback (
     id_feedback INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL,
     id_produto INTEGER NOT NULL,
@@ -134,7 +134,7 @@ CREATE TABLE feedback (
         ON DELETE CASCADE
 );
 
-CREATE INDEX idx_feedback_produto ON feedback(id_produto);
-CREATE INDEX idx_feedback_cliente ON feedback(id_cliente);
+CREATE INDEX IF NOT EXISTS idx_feedback_produto ON feedback(id_produto);
+CREATE INDEX IF NOT EXISTS idx_feedback_cliente ON feedback(id_cliente);
     `);
 };
