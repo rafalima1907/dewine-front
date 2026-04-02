@@ -23,52 +23,54 @@ export default function Home() {
   const secondRow = products.slice(4, 8);
   console.log(secondRow);
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <Image
-          source={require("../../assets/imagemPrincipalHome.png")}
-          style={styles.wineImage}
-        />
-        <Text style={styles.title}>Novos Lançamentos</Text>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.cardList}
-          style={{ marginBottom: 20 }}
-        >
-          {firstRow.map((product) => {
-            return (
+    <SafeAreaView>
+      <ScrollView>
+        <View style={styles.container}>
+          <Image
+            source={require("../../assets/imagemPrincipalHome.png")}
+            style={styles.wineImage}
+          />
+          <Text style={styles.title}>Novos Lançamentos</Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.cardList}
+            style={{ marginBottom: 20 }}
+          >
+            {firstRow.map((product) => {
+              return (
+                <WineCard
+                  key={product.id_produto}
+                  title={product.nome}
+                  year={product.id_produto + 1980}
+                  price={product.preco}
+                />
+              );
+            })}
+          </ScrollView>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.cardList}
+          >
+            {secondRow.map((product) => (
               <WineCard
                 key={product.id_produto}
                 title={product.nome}
-                year={product.id_produto + 1980}
+                year={product.id_produto + 1920}
                 price={product.preco}
               />
-            );
-          })}
-        </ScrollView>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.cardList}
-        >
-          {secondRow.map((product) => (
-            <WineCard
-              key={product.id_produto}
-              title={product.nome}
-              year={product.id_produto + 1920}
-              price={product.preco}
-            />
-          ))}
-        </ScrollView>
-         <Image
-        source={require("../../assets/segundaImagemHome.png")}
-        style={styles.wineImage2}
-      />
-      </View>
-     
-      <BottomNav></BottomNav>
-    </ScrollView>
+            ))}
+          </ScrollView>
+          <Image
+            source={require("../../assets/segundaImagemHome.png")}
+            style={styles.wineImage2}
+          />
+        </View>
+
+        <BottomNav></BottomNav>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
@@ -88,7 +90,7 @@ const styles = StyleSheet.create({
   cardList: {
     paddingHorizontal: 20,
   },
-  wineImage2:{
-    marginBottom:80,
+  wineImage2: {
+    marginBottom: 80,
   }
 });
