@@ -7,6 +7,7 @@ import WineBox from '../screens/WineBox.js';
 import Assinatura from '../screens/Assinatura.js'; 
 import Carrinho from '../screens/Carrinho.js'; 
 import Cadastro from '../screens/Cadastro.js';
+import Login from '../screens/Login.js';
 import { SQLiteProvider } from 'expo-sqlite';
 import { initDatabase } from '../services/initDatabase.js';
 import Header from '../components/Header.js';
@@ -18,12 +19,17 @@ export function StackRoutes() {
         <SQLiteProvider databaseName="dewine.db" onInit={initDatabase}>
             <NavigationContainer>
                 <Navigator 
-                    initialRouteName="Cadastro" 
+                    initialRouteName="Login" 
                     screenOptions={{ header: Header }}
                 >
                     <Screen 
                         name="Cadastro" 
                         component={Cadastro} 
+                        options={{ headerShown: false }} 
+                    />
+                     <Screen 
+                        name="Login" 
+                        component={Login} 
                         options={{ headerShown: false }} 
                     />
 
