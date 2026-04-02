@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer} from '@react-navigation/native';
 import Home from '../screens/Home.js';
 import Vinhos from '../screens/Vinhos.js'; 
 import Exclusivos from '../screens/Exclusivos.js';
@@ -11,18 +11,18 @@ import Login from '../screens/Login.js';
 import { SQLiteProvider } from 'expo-sqlite';
 import { initDatabase } from '../services/initDatabase.js';
 import Header from '../components/Header.js';
+// import { resetDatabase } from '../services/initDatabase.js';
 
-const { Screen, Navigator } = createNativeStackNavigator();
-
-export function StackRoutes() {
-    return (
-        <SQLiteProvider databaseName="dewine.db" onInit={initDatabase}>
-            <NavigationContainer>
-                <Navigator 
-                    initialRouteName="Login" 
+export function StackRoutes(){
+    const {Screen, Navigator} = createNativeStackNavigator();
+    return( 
+    <SQLiteProvider databaseName="dewine.db" onInit={initDatabase}>
+        <NavigationContainer >
+           <Navigator 
+                    // initialRouteName="Home" 
                     screenOptions={{ header: Header }}
                 >
-                    <Screen 
+                    {/* <Screen 
                         name="Cadastro" 
                         component={Cadastro} 
                         options={{ headerShown: false }} 
@@ -31,7 +31,7 @@ export function StackRoutes() {
                         name="Login" 
                         component={Login} 
                         options={{ headerShown: false }} 
-                    />
+                    /> */}
 
                     <Screen name="Home" component={Home} />
                     <Screen name="Vinhos" component={Vinhos} />
@@ -40,7 +40,7 @@ export function StackRoutes() {
                     <Screen name="Assinatura" component={Assinatura} />
                     <Screen name="Carrinho" component={Carrinho} />
                 </Navigator>
-            </NavigationContainer>
+        </NavigationContainer>
         </SQLiteProvider>
     );
 }
