@@ -10,6 +10,8 @@ import Cadastro from '../screens/Cadastro.js';
 import Login from '../screens/Login.js';
 import { SQLiteProvider } from 'expo-sqlite';
 import { initDatabase } from '../services/initDatabase.js';
+import DescricaoVinho from '../screens/DescricaoVinho.js';
+
 import Header from '../components/Header.js';
 // import { resetDatabase } from '../services/initDatabase.js';
 
@@ -39,6 +41,7 @@ export function StackRoutes(){
                     <Screen name="WineBox" component={WineBox} />
                     <Screen name="Assinatura" component={Assinatura} />
                     <Screen name="Carrinho" component={Carrinho} />
+                    <Screen name="DescricaoVinho" component={DescricaoVinho} />
                 </Navigator>
         </NavigationContainer>
         </SQLiteProvider>
