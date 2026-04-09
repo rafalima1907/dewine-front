@@ -95,7 +95,7 @@ export default function Assinatura() {
         <View style={{ height: 100 }} /> 
       </ScrollView>
 
-      <BottomNav />
+      {/* <BottomNav /> */}
     </View>
   );
 }

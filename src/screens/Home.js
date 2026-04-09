@@ -68,7 +68,7 @@ export default function Home() {
           />
         </View>
 
-        <BottomNav></BottomNav>
+        {/* <BottomNav></BottomNav> */}
       </ScrollView>
     </SafeAreaView>
   );

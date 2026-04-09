@@ -45,7 +45,7 @@ export default function Vinhos() {
         <View style={{ height: 100 }} /> 
       </ScrollView>
 
-      <BottomNav />
+      {/* <BottomNav /> */}
     </View>
   );
 }
