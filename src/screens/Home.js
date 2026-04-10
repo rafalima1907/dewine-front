@@ -23,31 +23,34 @@ export default function Home() {
   const secondRow = products.slice(4, 8);
   console.log(secondRow);
   return (
-    <SafeAreaView>
-      <ScrollView>
-        <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+        <View>
           <Image
             source={require("../../assets/imagemPrincipalHome.png")}
             style={styles.wineImage}
           />
           <Text style={styles.title}>Novos Lançamentos</Text>
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.cardList}
             style={{ marginBottom: 20 }}
           >
-            {firstRow.map((product) => {
-              return (
-                <WineCard
-                  key={product.id_produto}
-                  title={product.nome}
-                  year={product.id_produto + 1980}
-                  price={product.preco}
-                />
-              );
-            })}
+            {firstRow.map((product) => (
+              <WineCard
+                key={product.id_produto}
+                title={product.nome}
+                year={product.id_produto + 1980}
+                price={product.preco.toFixed(2)}
+                description={product.descricao}
+                category={product.categoria}
+                safra={product.ano_safra}
+              />
+            ))}
           </ScrollView>
+
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -58,17 +61,19 @@ export default function Home() {
                 key={product.id_produto}
                 title={product.nome}
                 year={product.id_produto + 1920}
-                price={product.preco}
+                price={product.preco.toFixed(2)}
+                description={product.descricao}
+                category={product.categoria}
+                safra={product.ano_safra}
               />
             ))}
           </ScrollView>
+
           <Image
             source={require("../../assets/segundaImagemHome.png")}
             style={styles.wineImage2}
           />
         </View>
-
-        {/* <BottomNav></BottomNav> */}
       </ScrollView>
     </SafeAreaView>
   );

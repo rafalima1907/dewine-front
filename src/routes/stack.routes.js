@@ -12,6 +12,7 @@ import { SQLiteProvider } from "expo-sqlite";
 import { initDatabase } from "../services/initDatabase.js";
 import DescricaoVinho from "../screens/DescricaoVinho.js";
 import BottomTabs from "./tab.routes.js";
+import DetalheVinho from "../screens/DetalheVinho.js";
 
 import Header from "../components/Header.js";
 import { resetDatabase } from '../services/initDatabase.js';
@@ -45,6 +46,7 @@ export function StackRoutes() {
           <Screen name="Assinatura" component={Assinatura} />
           <Screen name="Carrinho" component={Carrinho} />
           <Screen name="DescricaoVinho" component={DescricaoVinho} />
+          <Screen name="DetalheVinho" component={DetalheVinho} />
         </Navigator>
       </NavigationContainer>
     </SQLiteProvider>
