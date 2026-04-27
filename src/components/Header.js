@@ -1,16 +1,12 @@
-import React, { useState } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import React, { useState, useContext  } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { AuthContext } from "../context/auth";
 
 export default function Header() {
-   const navigation = useNavigation();
+  const navigation = useNavigation();
+  const { logout } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -45,32 +41,44 @@ export default function Header() {
               <Ionicons name="close" size={28} color="#000" />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem}
-            onPress={() => navigation.navigate("Tabs")}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate("Tabs")}
+            >
               <Text style={styles.menuText}>Home</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem} 
-            onPress={() => navigation.navigate("Exclusivos")}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate("Exclusivos")}
+            >
               <Text style={styles.menuText}>Exclusivos</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem}
-            onPress={() => navigation.navigate("WineBox")}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate("WineBox")}
+            >
               <Text style={styles.menuText}>WineBox</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.menuItem}
-            onPress={() => navigation.navigate("Assinatura")}>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate("Assinatura")}
+            >
               <Text style={styles.menuText}>Assinatura</Text>
             </TouchableOpacity>
 
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => logout()}
+            >
+              <Text style={styles.menuText}>Sair</Text>
+            </TouchableOpacity>
             <View style={styles.contactArea}>
               <Text style={styles.contactTitle}>Contate-nos:</Text>
               <Text style={styles.contactText}>+55 (11) 3160-4161</Text>
-              <Text style={styles.contactText}>
-                DeWine_Oficial@gmail.com
-              </Text>
+              <Text style={styles.contactText}>DeWine_Oficial@gmail.com</Text>
             </View>
           </View>
         </>
