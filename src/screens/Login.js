@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import { useContext } from "react";
+import { AuthContext } from "../context/auth";
 import {
   View,
   Text,
@@ -17,10 +20,47 @@ import ImageFundo from "../../assets/ImageFundo.png";
 import SetaVoltar from "../../assets/icons/seta_voltar.png";
 
 export default function Login() {
+  const database = useSQLiteContext();
+  const { login } = useContext(AuthContext);
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [senhaHash, setSenhaHash] = useState("");
 
+  async function handleLogin() {
+    try {
+      if (!email || !senha) {
+        throw new Error("Preencha todos os campos");
+      }
+      // const result2 = await database.getAllAsync(
+      //   "SELECT senha, email FROM cliente"
+      // );
+      const result = await database.getAllAsync(
+        `
+      SELECT c.senha
+      FROM cliente c
+      JOIN email e ON e.id_cliente = c.id_cliente
+      WHERE e.email = ?
+      `,
+        [email],
+      );
+
+      console.log("Resultado da consulta:", result);
+      // console.log("Resultado da consulta 2:", result2);
+
+      if (result.length === 0) {
+        throw new Error("Usuário não encontrado");
+      }
+
+      const senhaHash = result[0].senha;
+
+      console.log("Senha hash do banco:", senhaHash);
+
+      await login({ email, senha, senhaHash });
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
   return (
     <ImageBackground
       source={ImageFundo}
@@ -72,11 +112,11 @@ export default function Login() {
                 <Text style={styles.underline}>cadastro</Text>
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => navigation.navigate("Tabs")}>
+            {/* <TouchableOpacity onPress={() => navigation.navigate("Tabs")}>
               <Text style={{ color: "#F5F0E6", fontSize: 13 }}>Home</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            <TouchableOpacity style={styles.btnEntrar}>
+            <TouchableOpacity style={styles.btnEntrar} onPress={handleLogin}>
               <Text style={styles.btnText}>Entrar</Text>
             </TouchableOpacity>
           </View>

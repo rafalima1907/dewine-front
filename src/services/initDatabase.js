@@ -8,6 +8,7 @@ export const initDatabase = async (db) => {
 CREATE TABLE IF NOT EXISTS cliente (
     id_cliente INTEGER PRIMARY KEY AUTOINCREMENT,
     nome TEXT NOT NULL,
+    senha TEXT NOT NULL,
     cpf TEXT UNIQUE NOT NULL
 );
 
