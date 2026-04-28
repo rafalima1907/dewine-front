@@ -8,6 +8,7 @@ import Assinatura from "../screens/Assinatura.js";
 import Carrinho from "../screens/Carrinho.js";
 import Cadastro from "../screens/Cadastro.js";
 import Login from "../screens/Login.js";
+import CadProdutos from "../screens/CadProdutos.js";
 import { SQLiteProvider } from "expo-sqlite";
 import { initDatabase } from "../services/initDatabase.js";
 import DescricaoVinho from "../screens/DescricaoVinho.js";
@@ -45,6 +46,7 @@ export function StackRoutes() {
           <Stack.Screen name="Assinatura" component={Assinatura} />
           <Stack.Screen name="Carrinho" component={Carrinho} />
           <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
+          <Stack.Screen name="CadProdutos" component={CadProdutos} />
         </>
       )}
     </Stack.Navigator>

@@ -70,7 +70,7 @@ export default function Header() {
             {isAdmin && (
               <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => navigation.navigate("Assinatura")}
+                onPress={() => navigation.navigate("CadProdutos")}
               >
                 <Text style={styles.menuText}>Editar produtos</Text>
               </TouchableOpacity>
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-   height: 90,
+    height: 90,
     backgroundColor: "#faf7f0",
     flexDirection: "row",
     alignItems: "center",
