@@ -9,6 +9,7 @@ export const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [logado, setLogado] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [autenticado, setAutenticado] = useState(false);
   const [loading, setLoading] = useState(true);
   const [canBack, setCanBack] = useState(false);
@@ -52,6 +53,35 @@ export function AuthProvider({ children }) {
       throw new Error("Email ou senha inválidos");
     }
   }
+  async function loginAdmin(credentials) {
+    try {
+      const response = await fetch(`${api}users/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(credentials),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Erro no login admin");
+      }
+
+      const token = data.token;
+      const decoded = jwtDecode(token);
+
+      await AsyncStorage.setItem("token", token);
+
+      setUser(decoded);
+      setLogado(true);
+      setIsAdmin(true);
+
+      successToast("Admin", "Login admin realizado!");
+    } catch (error) {
+      console.log(error);
+      errorToast("Erro", "Credenciais de admin inválidas");
+    }
+  }
 
   async function logout() {
     await AsyncStorage.removeItem("token");
@@ -66,22 +96,28 @@ export function AuthProvider({ children }) {
   async function estaLogado() {
     try {
       const token = await AsyncStorage.getItem("token");
+      const adminToken = await AsyncStorage.getItem("adminToken");
 
-      if (!token) {
+      const currentToken = adminToken || token;
+
+      if (!currentToken) {
         setLogado(false);
         return false;
       }
 
-      const decoded = jwtDecode(token);
+      const decoded = jwtDecode(currentToken);
 
       if (Date.now() >= decoded.exp * 1000) {
         await AsyncStorage.removeItem("token");
+        await AsyncStorage.removeItem("adminToken");
         setLogado(false);
         return false;
       }
 
       setUser(decoded);
       setLogado(true);
+      setIsAdmin(!!adminToken);
+
       return true;
     } catch (error) {
       console.log(error);
@@ -89,7 +125,6 @@ export function AuthProvider({ children }) {
       return false;
     }
   }
-
   async function handleStates() {
     await estaLogado();
     setLoading(false);
@@ -104,9 +139,11 @@ export function AuthProvider({ children }) {
       value={{
         user,
         login,
+        loginAdmin,
         logout,
         logado,
         loading,
+        isAdmin,
         canBack,
         setCanBack,
         successToast,

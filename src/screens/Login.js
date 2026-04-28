@@ -21,7 +21,7 @@ import SetaVoltar from "../../assets/icons/seta_voltar.png";
 
 export default function Login() {
   const database = useSQLiteContext();
-  const { login } = useContext(AuthContext);
+  const { login, loginAdmin } = useContext(AuthContext);
   const navigation = useNavigation();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -37,7 +37,7 @@ export default function Login() {
       // );
       const result = await database.getAllAsync(
         `
-      SELECT c.senha
+      SELECT c.senha, email
       FROM cliente c
       JOIN email e ON e.id_cliente = c.id_cliente
       WHERE e.email = ?
@@ -55,8 +55,12 @@ export default function Login() {
       const senhaHash = result[0].senha;
 
       console.log("Senha hash do banco:", senhaHash);
+      if(email.includes("@admin.com")){
+        await loginAdmin({ email, senha, senhaHash }, true);
+      }else{
+        await login({ email, senha, senhaHash });
+      }
 
-      await login({ email, senha, senhaHash });
     } catch (error) {
       console.log(error.message);
     }
