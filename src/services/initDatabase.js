@@ -124,6 +124,14 @@ INSERT OR IGNORE INTO produtos (nome, categoria, preco, descricao, estoque, ano_
 ('VINHO CANTINHO DO VALE', 'VINHO BARATO', 10.00, 'VINHO BAIXA QUALIDADE', 30, 2023),
 ('DRAFT', 'VINHO BARATO', 15.00, 'VINHO CHOPP', 20, 2024),
 ('PÉRGOLA', 'VINHO BARATO', 25.00, 'VINHO BOM', 15, 2022);
+
+
+-- ADMIN PADRÃO
+INSERT OR IGNORE INTO cliente (id_cliente, nome, senha, cpf)
+VALUES (1, 'Admin', '123456', '00000000000');
+
+INSERT OR IGNORE INTO email (id_cliente, email, tipo)
+VALUES (1, 'admin@admin.com', 'principal');
   `);
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useContext  } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -6,9 +6,8 @@ import { AuthContext } from "../context/auth";
 
 export default function Header() {
   const navigation = useNavigation();
-  const { logout } = useContext(AuthContext);
+  const { logout, isAdmin } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
-
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
@@ -68,11 +67,16 @@ export default function Header() {
             >
               <Text style={styles.menuText}>Assinatura</Text>
             </TouchableOpacity>
+            {isAdmin && (
+              <TouchableOpacity
+                style={styles.menuItem}
+                onPress={() => navigation.navigate("Assinatura")}
+              >
+                <Text style={styles.menuText}>Editar produtos</Text>
+              </TouchableOpacity>
+            )}
 
-            <TouchableOpacity
-              style={styles.menuItem}
-              onPress={() => logout()}
-            >
+            <TouchableOpacity style={styles.menuItem} onPress={() => logout()}>
               <Text style={styles.menuText}>Sair</Text>
             </TouchableOpacity>
             <View style={styles.contactArea}>
@@ -93,7 +97,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    height: 90,
+   height: 90,
     backgroundColor: "#faf7f0",
     flexDirection: "row",
     alignItems: "center",
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: 250,
-    height: 420,
+    height: "auto",
     backgroundColor: "#d8d1bf",
     borderTopRightRadius: 35,
     borderBottomRightRadius: 35,
