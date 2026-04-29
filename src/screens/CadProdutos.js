@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     View, Text, StyleSheet, ImageBackground, TextInput,
     TouchableOpacity, Image, KeyboardAvoidingView,
     Platform, ScrollView, Alert
 } from "react-native";
 import * as ImagePicker from 'expo-image-picker';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSQLiteContext } from "expo-sqlite";
 import { api } from "../services/api";
 
@@ -15,6 +15,8 @@ import SetaVoltar from "../../assets/icons/seta_voltar.png";
 export default function CadProdutos() {
     const database = useSQLiteContext();
     const navigation = useNavigation();
+    const route = useRoute();
+    const { produto, isEdit } = route.params || {};
 
     const [nome, setNome] = useState("");
     const [preco, setPreco] = useState("");
@@ -23,6 +25,18 @@ export default function CadProdutos() {
     const [descricao, setDescricao] = useState("");
     const [estoque, setEstoque] = useState("");
     const [imagem, setImagem] = useState(null);
+
+    useEffect(() => {
+        if (isEdit && produto) {
+            setNome(produto.nome || "");
+            setPreco(produto.preco ? produto.preco.toString() : "");
+            setCategoria(produto.categoria || "");
+            setAnoSafra(produto.ano_safra ? produto.ano_safra.toString() : "");
+            setDescricao(produto.descricao || "");
+            setEstoque(produto.estoque ? produto.estoque.toString() : "");
+            setImagem(produto.url_imagem || null);
+        }
+    }, [isEdit, produto]);
 
     const selecionarImagem = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
@@ -47,8 +61,11 @@ export default function CadProdutos() {
             const estoqueFormatado = parseInt(estoque);
             const safraFormatada = anoSafra ? parseInt(anoSafra) : null;
 
-            const response = await fetch(`${api}produtos/cadastro`, {
-                method: "POST",
+            const url = isEdit ? `${api}produtos/editar/${produto.id_produto}` : `${api}produtos/cadastro`;
+            const method = isEdit ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method: method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     nome,
@@ -64,17 +81,28 @@ export default function CadProdutos() {
             const data = await response.json();
             if (!response.ok) throw new Error(data?.message || "Erro no servidor");
 
-            const result = await database.runAsync(
-                `INSERT INTO produtos (nome, preco, categoria, descricao, ano_safra, estoque) VALUES (?, ?, ?, ?, ?, ?)`,
-                [nome, precoFormatado, categoria, descricao, safraFormatada, estoqueFormatado]
-            );
+            if (isEdit) {
+                await database.runAsync(
+                    `UPDATE produtos SET nome = ?, preco = ?, categoria = ?, descricao = ?, ano_safra = ?, estoque = ? WHERE id_produto = ?`,
+                    [nome, precoFormatado, categoria, descricao, safraFormatada, estoqueFormatado, produto.id_produto]
+                );
+                await database.runAsync(
+                    `UPDATE produto_imagens SET url = ? WHERE id_produto = ?`,
+                    [imagem, produto.id_produto]
+                );
+            } else {
+                const result = await database.runAsync(
+                    `INSERT INTO produtos (nome, preco, categoria, descricao, ano_safra, estoque) VALUES (?, ?, ?, ?, ?, ?)`,
+                    [nome, precoFormatado, categoria, descricao, safraFormatada, estoqueFormatado]
+                );
 
-            const idInserido = result.lastInsertRowId;
+                const idInserido = result.lastInsertRowId;
 
-            await database.runAsync(
-                `INSERT INTO produto_imagens (id_produto, url, is_principal) VALUES (?, ?, ?)`,
-                [idInserido, imagem, 1]
-            );
+                await database.runAsync(
+                    `INSERT INTO produto_imagens (id_produto, url, is_principal) VALUES (?, ?, ?)`,
+                    [idInserido, imagem, 1]
+                );
+            }
 
             setNome("");
             setPreco("");
@@ -102,7 +130,7 @@ export default function CadProdutos() {
                     </TouchableOpacity>
 
                     <View style={styles.card}>
-                        <Text style={styles.title}>Editar Produtos</Text>
+                        <Text style={styles.title}>{isEdit ? 'Editar Produto' : 'Cadastrar Produto'}</Text>
 
                         <TouchableOpacity style={styles.imagePlaceholder} onPress={selecionarImagem}>
                             {imagem ? (
