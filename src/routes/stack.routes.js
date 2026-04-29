@@ -9,7 +9,7 @@ import Carrinho from "../screens/Carrinho.js";
 import Cadastro from "../screens/Cadastro.js";
 import Login from "../screens/Login.js";
 import CadProdutos from "../screens/CadProdutos.js";
-import AdminProdutos from "../screens/AdminProdutos.js"; // <-- Importação da tela nova
+import AdminProdutos from "../screens/AdminProdutos.js";
 import { SQLiteProvider } from "expo-sqlite";
 import { initDatabase } from "../services/initDatabase.js";
 import DescricaoVinho from "../screens/DescricaoVinho.js";
@@ -27,9 +27,7 @@ export function StackRoutes() {
   const { logado, loading } = useContext(AuthContext);
 
   if (loading) return <SplashScreen />;
-// useEffect(() => {
-//     resetDatabase();
-//   }, []);
+
   return (
     <Stack.Navigator
       key={logado ? "user" : "guest"}
@@ -37,7 +35,11 @@ export function StackRoutes() {
     >
       {!logado ? (
         <>
-          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+          {/* Telas movidas para cá temporariamente para o teste de navegação funcionar */}
+          <Stack.Screen name="AdminProdutos" component={AdminProdutos} options={{ headerShown: false }} />
+          <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
+          <Stack.Screen name="CadProdutos" component={CadProdutos} />
+<Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
           <Stack.Screen name="Cadastro" component={Cadastro} options={{ headerShown: false }} />
         </>
       ) : (
@@ -47,9 +49,6 @@ export function StackRoutes() {
           <Stack.Screen name="WineBox" component={WineBox} />
           <Stack.Screen name="Assinatura" component={Assinatura} />
           <Stack.Screen name="Carrinho" component={Carrinho} />
-          <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
-          <Stack.Screen name="CadProdutos" component={CadProdutos} />
-          <Stack.Screen name="AdminProdutos" component={AdminProdutos} options={{ headerShown: false }} />
         </>
       )}
     </Stack.Navigator>

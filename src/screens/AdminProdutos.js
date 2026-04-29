@@ -31,11 +31,32 @@ export default function AdminProdutos() {
   }, []);
 
   const handleView = (produto) => {
+    navigation.navigate("DescricaoVinho", { produto: produto });
+  };
+
+  const handleEdit = (item) => {
+    navigation.navigate("CadProdutos", { produto: item, isEdit: true });
+  };
+
+  const handleDelete = (id, nome) => {
     Alert.alert(
-      "Detalhes do Produto",
-      `Nome: ${produto.nome}\nCategoria: ${
-        produto.categoria || "Não informada"
-      }\nDescrição: ${produto.descricao || "Sem descrição"}`
+      "Confirmar Exclusão",
+      `Tem certeza que deseja excluir o vinho ${nome}?`,
+      [
+        { text: "Cancelar", style: "cancel" },
+        {
+          text: "Excluir",
+          style: "destructive",
+          onPress: async () => {
+            try {
+              await database.runAsync("DELETE FROM produtos WHERE id_produto = ?", [id]);
+              getProducts();
+            } catch (error) {
+              console.error("Erro ao excluir produto:", error);
+            }
+          },
+        },
+      ]
     );
   };
 
@@ -85,7 +106,17 @@ export default function AdminProdutos() {
                   <Ionicons name="eye-outline" size={24} color="#333" />
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.iconBtn}>
+                <TouchableOpacity
+                  onPress={() => handleEdit(item)}
+                  style={styles.iconBtn}
+                >
+                  <Ionicons name="pencil-outline" size={20} color="#333" />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => handleDelete(item.id_produto, item.nome)}
+                  style={styles.iconBtn}
+                >
                   <Image
                     source={require("../../assets/icons/x.png")}
                     style={styles.xIcon}
