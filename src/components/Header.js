@@ -8,6 +8,7 @@ export default function Header() {
   const navigation = useNavigation();
   const { logout, isAdmin } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(false);
+  // console.log("isAdmin no Header:", isAdmin);
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
@@ -70,7 +71,7 @@ export default function Header() {
             {isAdmin && (
               <TouchableOpacity
                 style={styles.menuItem}
-                onPress={() => navigation.navigate("CadProdutos")}
+                onPress={() => navigation.navigate("AdminProdutos")}
               >
                 <Text style={styles.menuText}>Editar produtos</Text>
               </TouchableOpacity>

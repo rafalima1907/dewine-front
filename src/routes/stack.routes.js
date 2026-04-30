@@ -35,16 +35,31 @@ export function StackRoutes() {
     >
       {!logado ? (
         <>
-          {/* Telas movidas para cá temporariamente para o teste de navegação funcionar */}
-          <Stack.Screen name="AdminProdutos" component={AdminProdutos} options={{ headerShown: false }} />
-          <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
-          <Stack.Screen name="CadProdutos" component={CadProdutos} />
-<Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-          <Stack.Screen name="Cadastro" component={Cadastro} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Login"
+            component={Login}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Cadastro"
+            component={Cadastro}
+            options={{ headerShown: false }}
+          />
         </>
       ) : (
         <>
-          <Stack.Screen name="Tabs" component={BottomTabs} options={{ headerShown: false }} />
+          <Stack.Screen
+            name="Tabs"
+            component={BottomTabs}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="AdminProdutos"
+            component={AdminProdutos}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
+          <Stack.Screen name="CadProdutos" component={CadProdutos} />
           <Stack.Screen name="Exclusivos" component={Exclusivos} />
           <Stack.Screen name="WineBox" component={WineBox} />
           <Stack.Screen name="Assinatura" component={Assinatura} />

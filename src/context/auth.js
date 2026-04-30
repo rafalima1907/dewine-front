@@ -45,6 +45,7 @@ export function AuthProvider({ children }) {
 
       setUser(decoded);
       setLogado(true);
+      await AsyncStorage.setItem("isAdmin", "false");
 
       successToast("Login", data.message);
       // navigation.navigate("Tabs");
@@ -71,6 +72,7 @@ export function AuthProvider({ children }) {
       const decoded = jwtDecode(token);
 
       await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("isAdmin", "true");
 
       setUser(decoded);
       setLogado(true);
@@ -85,6 +87,7 @@ export function AuthProvider({ children }) {
 
   async function logout() {
     await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("isAdmin");
 
     setUser(null);
     setLogado(false);
@@ -96,27 +99,25 @@ export function AuthProvider({ children }) {
   async function estaLogado() {
     try {
       const token = await AsyncStorage.getItem("token");
-      const adminToken = await AsyncStorage.getItem("adminToken");
+      const adminFlag = await AsyncStorage.getItem("isAdmin");
 
-      const currentToken = adminToken || token;
-
-      if (!currentToken) {
+      if (!token) {
         setLogado(false);
         return false;
       }
 
-      const decoded = jwtDecode(currentToken);
+      const decoded = jwtDecode(token);
 
       if (Date.now() >= decoded.exp * 1000) {
         await AsyncStorage.removeItem("token");
-        await AsyncStorage.removeItem("adminToken");
+        await AsyncStorage.removeItem("isAdmin");
         setLogado(false);
         return false;
       }
 
       setUser(decoded);
       setLogado(true);
-      setIsAdmin(!!adminToken);
+      setIsAdmin(adminFlag === "true");
 
       return true;
     } catch (error) {

@@ -21,7 +21,7 @@ export default function Home() {
   const firstRow = products.slice(0, 4);
 
   const secondRow = products.slice(4, 8);
-  console.log(secondRow);
+  // console.log(secondRow);
   return (
     <SafeAreaView>
       <ScrollView>
