@@ -14,6 +14,7 @@ import BottomTabs from "./tab.routes.js";
 import { useContext } from "react";
 import { AuthContext } from "../context/auth";
 import Header from "../components/Header.js";
+import { resetDatabase } from "../services/initDatabase.js";
 import SplashScreen from "../screens/SplashScreen";
 
 const Stack = createNativeStackNavigator();
@@ -30,40 +31,21 @@ export function StackRoutes() {
     >
       {!logado ? (
         <>
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="Cadastro"
-            component={Cadastro}
-            options={{ headerShown: false }}
-          />
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+          <Stack.Screen name="Cadastro" component={Cadastro} options={{ headerShown: false }} />
         </>
       ) : (
         <>
-          <Stack.Screen
-            name="Tabs"
-            component={BottomTabs}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
-          <Stack.Screen name="CartScreen" component={CartScreen} />
+          <Stack.Screen name="Tabs" component={BottomTabs} options={{ headerShown: false }} />
           <Stack.Screen name="Exclusivos" component={Exclusivos} />
           <Stack.Screen name="WineBox" component={WineBox} />
           <Stack.Screen name="Assinatura" component={Assinatura} />
-
-          {/* Telas admin */}
-          <Stack.Screen
-            name="AdminProdutos"
-            component={AdminProdutos}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen
-            name="CadProdutos"
-            component={CadProdutos}
-          />
+          <Stack.Screen name="Carrinho" component={Carrinho} />
+          <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
+          
+          {/* 👇 AS DUAS TELAS DO ADMIN ADICIONADAS AQUI 👇 */}
+          <Stack.Screen name="AdminProdutos" component={AdminProdutos} options={{ headerShown: false }} />
+          <Stack.Screen name="CadProdutos" component={CadProdutos} />
         </>
       )}
     </Stack.Navigator>
