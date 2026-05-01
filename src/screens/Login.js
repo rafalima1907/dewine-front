@@ -26,45 +26,37 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [senhaHash, setSenhaHash] = useState("");
+  const [erro, setErro] = useState("");
 
   async function handleLogin() {
-    try {
-      if (!email || !senha) {
-        throw new Error("Preencha todos os campos");
-      }
-      // const result2 = await database.getAllAsync(
-      //   "SELECT senha, email FROM cliente"
-      // );
-      const result = await database.getAllAsync(
-        `
-      SELECT c.senha, email
-      FROM cliente c
-      JOIN email e ON e.id_cliente = c.id_cliente
-      WHERE e.email = ?
-      `,
-        [email],
-      );
+  try {
+    setErro("");
+    if (!email || !senha) throw new Error("Preencha todos os campos");
 
-      console.log("Resultado da consulta:", result);
-      // console.log("Resultado da consulta 2:", result2);
+    const result = await database.getAllAsync(
+      `SELECT c.senha, email FROM cliente c
+       JOIN email e ON e.id_cliente = c.id_cliente
+       WHERE e.email = ?`,
+      [email]
+    );
 
-      if (result.length === 0) {
-        throw new Error("Usuário não encontrado");
-      }
+    console.log("Hash salvo no banco:", result[0]?.senha);
 
-      const senhaHash = result[0].senha;
+    if (result.length === 0) throw new Error("Usuário não encontrado");
 
-      console.log("Senha hash do banco:", senhaHash);
-      if(email.includes("@admin.com")){
-        await loginAdmin({ email, senha, senhaHash }, true);
-      }else{
-        await login({ email, senha, senhaHash });
-      }
+    const senhaHash = result[0].senha;
+    
+    console.log("Enviando para o backend:", { email, senha, senhaHash }); // ← veja o log
 
-    } catch (error) {
-      console.log(error.message);
+    if (email.includes("@admin.com")) {
+      await loginAdmin({ email, senha, senhaHash });
+    } else {
+      await login({ email, senha, senhaHash });
     }
+  } catch (error) {
+    setErro(error.message);
   }
+}
   return (
     <ImageBackground
       source={ImageFundo}
@@ -119,6 +111,18 @@ export default function Login() {
             {/* <TouchableOpacity onPress={() => navigation.navigate("Tabs")}>
               <Text style={{ color: "#F5F0E6", fontSize: 13 }}>Home</Text>
             </TouchableOpacity> */}
+
+            {erro ? (
+              <Text
+                style={{
+                  color: "#ffcccc",
+                  marginBottom: 10,
+                  textAlign: "center",
+                }}
+              >
+                {erro}
+              </Text>
+            ) : null}
 
             <TouchableOpacity style={styles.btnEntrar} onPress={handleLogin}>
               <Text style={styles.btnText}>Entrar</Text>

@@ -26,7 +26,9 @@ export function AuthProvider({ children }) {
 
   async function login(credentials) {
     try {
-      const response = await fetch(`${api}users/login`, {
+      const url = `${api}/users/login`;
+      console.log("URL chamada:", url); // ← confirme no terminal
+      const response = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(credentials),
@@ -56,6 +58,7 @@ export function AuthProvider({ children }) {
   }
   async function loginAdmin(credentials) {
     try {
+      console.log("URL chamada (admin):", api + "/users/login");
       const response = await fetch(`${api}users/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },

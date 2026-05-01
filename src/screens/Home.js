@@ -21,7 +21,6 @@ export default function Home() {
   const firstRow = products.slice(0, 4);
 
   const secondRow = products.slice(4, 8);
-  // console.log(secondRow);
   return (
     <SafeAreaView>
       <ScrollView>
@@ -38,14 +37,7 @@ export default function Home() {
             style={{ marginBottom: 20 }}
           >
             {firstRow.map((product) => {
-              return (
-                <WineCard
-                  key={product.id_produto}
-                  title={product.nome}
-                  year={product.id_produto + 1980}
-                  price={product.preco}
-                />
-              );
+              return <WineCard key={product.id_produto} idCliente={1} produto={product} />;
             })}
           </ScrollView>
           <ScrollView
@@ -54,12 +46,7 @@ export default function Home() {
             contentContainerStyle={styles.cardList}
           >
             {secondRow.map((product) => (
-              <WineCard
-                key={product.id_produto}
-                title={product.nome}
-                year={product.id_produto + 1920}
-                price={product.preco}
-              />
+              <WineCard key={product.id_produto} idCliente={1} produto={product} />
             ))}
           </ScrollView>
           <Image
@@ -68,7 +55,6 @@ export default function Home() {
           />
         </View>
 
-        {/* <BottomNav></BottomNav> */}
       </ScrollView>
     </SafeAreaView>
   );
@@ -92,5 +78,5 @@ const styles = StyleSheet.create({
   },
   wineImage2: {
     marginBottom: 80,
-  }
+  },
 });

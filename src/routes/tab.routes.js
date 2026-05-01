@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import Home from "../screens/Home.js";
 import Vinhos from "../screens/Vinhos.js";
-import Carrinho from "../screens/Carrinho.js";
+import CartScreen from "../screens/CartScreen.js";
 import Header from "../components/Header.js";
 
 export default function BottomTabs() {
@@ -33,8 +33,8 @@ export default function BottomTabs() {
         }}
       />
       <Screen
-        name="Carrinho"
-        component={Carrinho}
+        name="CartScreen"
+        component={CartScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <View style={styles.iconWrapper}>

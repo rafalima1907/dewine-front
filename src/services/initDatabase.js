@@ -72,7 +72,7 @@ CREATE INDEX IF NOT EXISTS idx_imagem_produto ON produto_imagens(id_produto);
 CREATE TABLE IF NOT EXISTS compras (
     id_compra INTEGER PRIMARY KEY AUTOINCREMENT,
     id_cliente INTEGER NOT NULL,
-    id_endereco INTEGER NOT NULL,
+    id_endereco INTEGER NULL,
     data_compra DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     valor_total REAL NOT NULL,
     status TEXT NOT NULL DEFAULT 'pendente' 
@@ -121,14 +121,14 @@ CREATE INDEX IF NOT EXISTS idx_feedback_cliente ON feedback(id_cliente);
 
 -- Inserts Iniciais
 INSERT OR IGNORE INTO produtos (nome, categoria, preco, descricao, estoque, ano_safra) VALUES
-('VINHO CANTINHO DO VALE', 'VINHO BARATO', 10.00, 'VINHO BAIXA QUALIDADE', 30, 2023),
+('10.00', 'VINHO BARATO', 10.00, 'VINHO BAIXA QUALIDADE', 30, 2023),
 ('DRAFT', 'VINHO BARATO', 15.00, 'VINHO CHOPP', 20, 2024),
 ('PÉRGOLA', 'VINHO BARATO', 25.00, 'VINHO BOM', 15, 2022);
 
 
 -- ADMIN PADRÃO
 INSERT OR IGNORE INTO cliente (id_cliente, nome, senha, cpf)
-VALUES (1, 'Admin', '123456', '00000000000');
+VALUES (1, 'Admin', '$2b$10$2F1g5pKYllgZlnRbP975P.zi7jA3YKHxXy8J2JNo77PPlet.aJBu2', '00000000000');
 
 INSERT OR IGNORE INTO email (id_cliente, email, tipo)
 VALUES (1, 'admin@admin.com', 'principal');

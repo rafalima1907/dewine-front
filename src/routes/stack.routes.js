@@ -5,11 +5,11 @@ import Vinhos from "../screens/Vinhos.js";
 import Exclusivos from "../screens/Exclusivos.js";
 import WineBox from "../screens/WineBox.js";
 import Assinatura from "../screens/Assinatura.js";
-import Carrinho from "../screens/Carrinho.js";
 import Cadastro from "../screens/Cadastro.js";
 import Login from "../screens/Login.js";
 import CadProdutos from "../screens/CadProdutos.js";
 import AdminProdutos from "../screens/AdminProdutos.js";
+import CartScreen from "../screens/CartScreen.js";
 import { SQLiteProvider } from "expo-sqlite";
 import { initDatabase } from "../services/initDatabase.js";
 import DescricaoVinho from "../screens/DescricaoVinho.js";
@@ -59,11 +59,11 @@ export function StackRoutes() {
             options={{ headerShown: false }}
           />
           <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
+          <Stack.Screen name="CartScreen" component={CartScreen} />
           <Stack.Screen name="CadProdutos" component={CadProdutos} />
           <Stack.Screen name="Exclusivos" component={Exclusivos} />
           <Stack.Screen name="WineBox" component={WineBox} />
           <Stack.Screen name="Assinatura" component={Assinatura} />
-          <Stack.Screen name="Carrinho" component={Carrinho} />
         </>
       )}
     </Stack.Navigator>
