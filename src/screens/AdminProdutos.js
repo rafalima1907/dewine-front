@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -7,31 +7,49 @@ import {
   Image,
   TouchableOpacity,
   Alert,
+  Modal,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { useSQLiteContext } from "expo-sqlite";
 import { Ionicons } from "@expo/vector-icons";
+import { api } from "../services/api";
 
 export default function AdminProdutos() {
   const navigation = useNavigation();
   const [products, setProducts] = useState([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const database = useSQLiteContext();
 
   const getProducts = async () => {
     try {
+      const response = await fetch(`${api}produtos/listar`);
+      if (response.ok) {
+        const data = await response.json();
+        setProducts(data);
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+    try {
       const result = await database.getAllAsync("SELECT * FROM produtos");
       setProducts(result);
     } catch (error) {
-      console.error("Erro ao buscar produtos:", error);
+      console.error(error);
     }
   };
 
-  useEffect(() => {
-    getProducts();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      getProducts();
+    }, [])
+  );
 
   const handleView = (produto) => {
-    navigation.navigate("DescricaoVinho", { produto: produto });
+    setProdutoSelecionado(produto);
+    setModalVisible(true);
   };
 
   const handleEdit = (item) => {
@@ -49,10 +67,16 @@ export default function AdminProdutos() {
           style: "destructive",
           onPress: async () => {
             try {
-              await database.runAsync("DELETE FROM produtos WHERE id_produto = ?", [id]);
-              getProducts();
+              const response = await fetch(`${api}produtos/excluir/${id}`, {
+                method: "DELETE",
+              });
+
+              if (response.ok) {
+                await database.runAsync("DELETE FROM produtos WHERE id_produto = ?", [id]);
+                getProducts();
+              }
             } catch (error) {
-              console.error("Erro ao excluir produto:", error);
+              console.error(error);
             }
           },
         },
@@ -74,6 +98,12 @@ export default function AdminProdutos() {
           />
         </TouchableOpacity>
         <Text style={styles.pageTitle}>Gerenciar Vinhos</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("CadProdutos", { isEdit: false })}
+          style={styles.addBtn}
+        >
+          <Text style={styles.addBtnText}>+ Novo Produto</Text>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.listWrapper}>
@@ -127,6 +157,57 @@ export default function AdminProdutos() {
           ))}
         </ScrollView>
       </View>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            {produtoSelecionado && (
+              <>
+                <Image
+                  source={require("../../assets/fotoExemplo.png")}
+                  style={styles.modalImage}
+                />
+                <Text style={styles.modalTitle}>{produtoSelecionado.nome}</Text>
+
+                <ScrollView style={styles.modalScroll}>
+                  <Text style={styles.modalText}>
+                    <Text style={styles.modalLabel}>Categoria: </Text>
+                    {produtoSelecionado.id_categoria}
+                  </Text>
+                  <Text style={styles.modalText}>
+                    <Text style={styles.modalLabel}>Preço: </Text>
+                    R$ {Number(produtoSelecionado.preco).toFixed(2).replace(".", ",")}
+                  </Text>
+                  <Text style={styles.modalText}>
+                    <Text style={styles.modalLabel}>Estoque: </Text>
+                    {produtoSelecionado.quantidade_estoque}
+                  </Text>
+                  <Text style={styles.modalText}>
+                    <Text style={styles.modalLabel}>Safra: </Text>
+                    {produtoSelecionado.ano_safra}
+                  </Text>
+                  <Text style={styles.modalText}>
+                    <Text style={styles.modalLabel}>Descrição: </Text>
+                    {produtoSelecionado.descricao}
+                  </Text>
+                </ScrollView>
+
+                <TouchableOpacity
+                  style={styles.modalCloseBtn}
+                  onPress={() => setModalVisible(false)}
+                >
+                  <Text style={styles.modalCloseText}>Fechar</Text>
+                </TouchableOpacity>
+              </>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -160,8 +241,18 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     fontStyle: "italic",
-    color: "#333",
     textAlign: "center",
+  },
+  addBtn: {
+    position: "absolute",
+    right: 20,
+    top: 18,
+    zIndex: 1,
+  },
+  addBtnText: {
+    color: "#333",
+    fontSize: 14,
+    fontWeight: "bold",
   },
   listWrapper: {
     flex: 1,
@@ -223,5 +314,63 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     resizeMode: "contain",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  modalCard: {
+    backgroundColor: "#FAF7F0",
+    borderRadius: 20,
+    padding: 20,
+    width: "100%",
+    maxHeight: "80%",
+    alignItems: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+  },
+  modalImage: {
+    width: 100,
+    height: 150,
+    resizeMode: "contain",
+    marginBottom: 15,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  modalScroll: {
+    width: "100%",
+    marginBottom: 20,
+  },
+  modalText: {
+    fontSize: 14,
+    color: "#444",
+    marginBottom: 8,
+    lineHeight: 20,
+  },
+  modalLabel: {
+    fontWeight: "bold",
+    color: "#333",
+  },
+  modalCloseBtn: {
+    backgroundColor: "#333",
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    borderRadius: 10,
+  },
+  modalCloseText: {
+    color: "#FFF",
+    fontWeight: "bold",
+    fontSize: 14,
   },
 });
