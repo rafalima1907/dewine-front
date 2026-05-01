@@ -23,21 +23,15 @@ export default function AdminProdutos() {
 
   const getProducts = async () => {
     try {
-      const response = await fetch(`${api}produtos/listar`);
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(data);
-        return;
-      }
+      const query = `
+        SELECT p.*, i.url as url_imagem 
+        FROM produtos p 
+        LEFT JOIN produto_imagens i ON p.id_produto = i.id_produto
+      `;
+      const result = await database.getAllAsync(query);
+      setProducts(result || []);
     } catch (error) {
-      console.error(error);
-    }
-
-    try {
-      const result = await database.getAllAsync("SELECT * FROM produtos");
-      setProducts(result);
-    } catch (error) {
-      console.error(error);
+      console.error("Erro ao buscar produtos:", error);
     }
   };
 
@@ -111,10 +105,10 @@ export default function AdminProdutos() {
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollContent}
         >
-          {products.map((item) => (
+          {products?.map((item) => (
             <View key={item.id_produto} style={styles.card}>
               <Image
-                source={require("../../assets/fotoExemplo.png")}
+                source={item.url_imagem ? { uri: item.url_imagem } : require("../../assets/fotoExemplo.png")}
                 style={styles.wineImage}
               />
 
@@ -169,7 +163,7 @@ export default function AdminProdutos() {
             {produtoSelecionado && (
               <>
                 <Image
-                  source={require("../../assets/fotoExemplo.png")}
+                  source={produtoSelecionado.url_imagem ? { uri: produtoSelecionado.url_imagem } : require("../../assets/fotoExemplo.png")}
                   style={styles.modalImage}
                 />
                 <Text style={styles.modalTitle}>{produtoSelecionado.nome}</Text>

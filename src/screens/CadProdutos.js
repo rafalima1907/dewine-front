@@ -40,7 +40,7 @@ export default function CadProdutos() {
 
     const selecionarImagem = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            mediaTypes: ['images'],
             allowsEditing: true,
             aspect: [4, 3],
             quality: 1,
@@ -86,9 +86,14 @@ export default function CadProdutos() {
                     `UPDATE produtos SET nome = ?, preco = ?, categoria = ?, descricao = ?, ano_safra = ?, estoque = ? WHERE id_produto = ?`,
                     [nome, precoFormatado, categoria, descricao, safraFormatada, estoqueFormatado, produto.id_produto]
                 );
+
                 await database.runAsync(
-                    `UPDATE produto_imagens SET url = ? WHERE id_produto = ?`,
-                    [imagem, produto.id_produto]
+                    `DELETE FROM produto_imagens WHERE id_produto = ?`,
+                    [produto.id_produto]
+                );
+                await database.runAsync(
+                    `INSERT INTO produto_imagens (id_produto, url, is_principal) VALUES (?, ?, ?)`,
+                    [produto.id_produto, imagem, 1]
                 );
             } else {
                 const result = await database.runAsync(
