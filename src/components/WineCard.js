@@ -1,28 +1,38 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import { useSQLiteContext } from "expo-sqlite";
 import FotoVinho from "../../assets/fotoExemplo.png";
 import AddToCartButton from "./AddToCartButton";
+import { AuthContext } from "../context/auth";
 
-export default function WineCard({ idCliente = 1, produto }) {
+export default function WineCard({ idCliente = 1, produto, title, year, price }) {
   const db = useSQLiteContext();
+  const { user } = useContext(AuthContext);
+  const clienteId = user?.id_cliente ?? idCliente;
+  const produtoCard =
+    produto ??
+    {
+      nome: title ?? "",
+      ano_safra: year ?? "",
+      preco: Number(String(price ?? 0).replace(",", ".")),
+    };
 
   const handleSaveLocal = async (itemValidado) => {
     let compra = await db.getFirstAsync(
       `SELECT * FROM compras WHERE id_cliente = ? AND status = 'pendente'
      ORDER BY data_compra DESC LIMIT 1`,
-      [idCliente],
+      [clienteId],
     );
 
     if (!compra) {
       const endereco = await db.getFirstAsync(
         `SELECT id_endereco FROM endereco WHERE id_cliente = ? LIMIT 1`,
-        [idCliente],
+        [clienteId],
       );
       const result = await db.runAsync(
         `INSERT INTO compras (id_cliente, id_endereco, valor_total, status)
        VALUES (?, ?, 0, 'pendente')`,
-        [idCliente, endereco?.id_endereco ?? null],
+        [clienteId, endereco?.id_endereco ?? null],
       );
       compra = { id_compra: result.lastInsertRowId };
     }
@@ -64,27 +74,29 @@ export default function WineCard({ idCliente = 1, produto }) {
   return (
     <View style={styles.card}>
       <Image
-        source={produto.url_imagem ? { uri: produto.url_imagem } : require("../../assets/fotoExemplo.png")}
+        source={produtoCard.url_imagem ? { uri: produtoCard.url_imagem } : FotoVinho}
         style={styles.wineImage}
       />
 
       <Text style={styles.title} numberOfLines={2}>
-        {produto?.nome ?? ""}
+        {produtoCard?.nome ?? ""}
       </Text>
-      <Text style={styles.year}>{produto?.ano_safra ?? ""}</Text>
+      <Text style={styles.year}>{produtoCard?.ano_safra ?? ""}</Text>
       <Text style={styles.price}>
-        R$ {Number(produto?.preco ?? 0).toFixed(2)}
+        R$ {Number(produtoCard?.preco ?? 0).toFixed(2)}
       </Text>
 
-      <AddToCartButton
-        idCliente={1}
+      {produto?.id_produto && (
+        <AddToCartButton
+        idCliente={clienteId}
         produto={produto}
         quantidade={1}
         onSaveLocal={handleSaveLocal}
         onSuccess={() => Alert.alert("✓", "Adicionado ao carrinho!")}
         onError={(msg) => Alert.alert("Erro", msg)}
         style={styles.cartButton}
-      />
+        />
+      )}
     </View>
   );
 }

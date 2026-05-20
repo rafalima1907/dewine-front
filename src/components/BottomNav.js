@@ -1,22 +1,28 @@
 import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function BottomNav() {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.iconWrapper}>
+        <TouchableOpacity
+          style={styles.iconWrapper}
+          onPress={() => navigation.navigate('Carrinho')}
+        >
           <Image source={require('../../assets/icons/carrinho.png')} style={styles.icon} />
           <View style={styles.badge}>
             <Text style={styles.badgeText}>3</Text>
           </View>
         </TouchableOpacity>
         
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Tabs', { screen: 'Home' })}>
           <Image source={require('../../assets/icons/home.png')} style={styles.icon} />
         </TouchableOpacity>
         
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Pedidos')}>
           <Image source={require('../../assets/icons/user.png')} style={styles.icon} />
         </TouchableOpacity>
       </View>

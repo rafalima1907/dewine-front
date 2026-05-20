@@ -133,6 +133,19 @@ VALUES (1, 'Admin', '123456', '00000000000');
 INSERT OR IGNORE INTO email (id_cliente, email, tipo)
 VALUES (1, 'admin@admin.com', 'principal');
   `);
+
+  const comprasColumns = await db.getAllAsync("PRAGMA table_info(compras)");
+  const columnNames = comprasColumns.map((column) => column.name);
+  const ensureComprasColumn = async (name, definition) => {
+    if (!columnNames.includes(name)) {
+      await db.execAsync(`ALTER TABLE compras ADD COLUMN ${name} ${definition}`);
+    }
+  };
+
+  await ensureComprasColumn("pagseguro_checkout_id", "TEXT");
+  await ensureComprasColumn("pagseguro_reference_id", "TEXT");
+  await ensureComprasColumn("pagseguro_status", "TEXT");
+  await ensureComprasColumn("pagseguro_link", "TEXT");
 };
 
 export async function resetDatabase() {
