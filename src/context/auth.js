@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
 
   async function login(credentials) {
     try {
-      const url = `${api}/users/login`;
+      const url = `${api}users/login`;
       console.log("URL chamada:", url); // ← confirme no terminal
       const response = await fetch(url, {
         method: "POST",
@@ -42,10 +42,14 @@ export function AuthProvider({ children }) {
 
       const token = data.token;
       const decoded = jwtDecode(token);
+      const idCliente = credentials.id_cliente ?? decoded.id_cliente;
 
       await AsyncStorage.setItem("token", token);
+      if (idCliente) {
+        await AsyncStorage.setItem("id_cliente", String(idCliente));
+      }
 
-      setUser(decoded);
+      setUser({ ...decoded, id_cliente: idCliente });
       setLogado(true);
       await AsyncStorage.setItem("isAdmin", "false");
 
@@ -73,11 +77,15 @@ export function AuthProvider({ children }) {
 
       const token = data.token;
       const decoded = jwtDecode(token);
+      const idCliente = credentials.id_cliente ?? decoded.id_cliente;
 
       await AsyncStorage.setItem("token", token);
+      if (idCliente) {
+        await AsyncStorage.setItem("id_cliente", String(idCliente));
+      }
       await AsyncStorage.setItem("isAdmin", "true");
 
-      setUser(decoded);
+      setUser({ ...decoded, id_cliente: idCliente });
       setLogado(true);
       setIsAdmin(true);
 
@@ -91,6 +99,7 @@ export function AuthProvider({ children }) {
   async function logout() {
     await AsyncStorage.removeItem("token");
     await AsyncStorage.removeItem("isAdmin");
+    await AsyncStorage.removeItem("id_cliente");
 
     setUser(null);
     setLogado(false);
@@ -103,6 +112,7 @@ export function AuthProvider({ children }) {
     try {
       const token = await AsyncStorage.getItem("token");
       const adminFlag = await AsyncStorage.getItem("isAdmin");
+      const idCliente = await AsyncStorage.getItem("id_cliente");
 
       if (!token) {
         setLogado(false);
@@ -118,7 +128,10 @@ export function AuthProvider({ children }) {
         return false;
       }
 
-      setUser(decoded);
+      setUser({
+        ...decoded,
+        id_cliente: idCliente ? Number(idCliente) : decoded.id_cliente,
+      });
       setLogado(true);
       setIsAdmin(adminFlag === "true");
 

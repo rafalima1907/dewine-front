@@ -18,7 +18,7 @@ export const validateCartItem = async (id_cliente, produto, quantidade = 1) => {
   return data;
 };
 
-export const submitCheckout = async (id_cliente, itens) => {
+export const submitCheckout = async (id_cliente, id_endereco, itens) => {
   const response = await fetch(`${api}cart/checkout`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },

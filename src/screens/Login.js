@@ -34,7 +34,7 @@ export default function Login() {
     if (!email || !senha) throw new Error("Preencha todos os campos");
 
     const result = await database.getAllAsync(
-      `SELECT c.senha, email FROM cliente c
+      `SELECT c.id_cliente, c.senha, email FROM cliente c
        JOIN email e ON e.id_cliente = c.id_cliente
        WHERE e.email = ?`,
       [email]
@@ -44,14 +44,15 @@ export default function Login() {
 
     if (result.length === 0) throw new Error("Usuário não encontrado");
 
+    const id_cliente = result[0].id_cliente;
     const senhaHash = result[0].senha;
     
-    console.log("Enviando para o backend:", { email, senha, senhaHash }); // ← veja o log
+    console.log("Enviando para o backend:", { id_cliente, email, senha, senhaHash }); // ← veja o log
 
     if (email.includes("@admin.com")) {
-      await loginAdmin({ email, senha, senhaHash });
+      await loginAdmin({ id_cliente, email, senha, senhaHash });
     } else {
-      await login({ email, senha, senhaHash });
+      await login({ id_cliente, email, senha, senhaHash });
     }
   } catch (error) {
     setErro(error.message);

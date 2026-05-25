@@ -10,6 +10,7 @@ import CadProdutos from "../screens/CadProdutos.js";
 import AdminProdutos from "../screens/AdminProdutos.js";
 import CartScreen from "../screens/CartScreen.js";
 import DescricaoVinho from "../screens/DescricaoVinho.js";
+import PedidosScreen from "../screens/PedidosScreen.js";
 import BottomTabs from "./tab.routes.js";
 import { useContext } from "react";
 import { AuthContext } from "../context/auth";
@@ -42,6 +43,7 @@ export function StackRoutes() {
           <Stack.Screen name="Assinatura" component={Assinatura} />
           <Stack.Screen name="Carrinho" component={CartScreen} />
           <Stack.Screen name="DescricaoVinho" component={DescricaoVinho} />
+          <Stack.Screen name="Pedidos" component={PedidosScreen} />
           
           <Stack.Screen name="AdminProdutos" component={AdminProdutos} options={{ headerShown: false }} />
           <Stack.Screen name="CadProdutos" component={CadProdutos} />

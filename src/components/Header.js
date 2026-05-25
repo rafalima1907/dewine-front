@@ -68,6 +68,12 @@ export default function Header() {
             >
               <Text style={styles.menuText}>Assinatura</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItem}
+              onPress={() => navigation.navigate("Pedidos")}
+            >
+              <Text style={styles.menuText}>Meus pedidos</Text>
+            </TouchableOpacity>
             {isAdmin && (
               <TouchableOpacity
                 style={styles.menuItem}

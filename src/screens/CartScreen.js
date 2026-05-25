@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import {
   View,
   Text,
@@ -15,11 +15,14 @@ import {
 import { useFocusEffect } from "@react-navigation/native";
 import { useSQLiteContext } from "expo-sqlite";
 import { submitCheckout } from "../services/cartService";
+import { AuthContext } from "../context/auth";
 
 const ID_CLIENTE_PLACEHOLDER = 1; // substitua pelo id do seu contexto de auth
 
 export default function CartScreen({ navigation, route }) {
-  const id_cliente = route?.params?.id_cliente ?? ID_CLIENTE_PLACEHOLDER;
+  const { user } = useContext(AuthContext);
+  const id_cliente =
+    route?.params?.id_cliente ?? user?.id_cliente ?? ID_CLIENTE_PLACEHOLDER;
   const db = useSQLiteContext();
   const [itens, setItens] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -172,15 +175,32 @@ export default function CartScreen({ navigation, route }) {
         })),
       );
       const id_compra = itens[0].id_compra;
+      const pagamento = pedido.pagamento ?? {};
       await db.runAsync(
-        `UPDATE compras SET status = 'pago', valor_total = ? WHERE id_compra = ?`,
-        [pedido.valor_total, id_compra],
+        `UPDATE compras
+         SET status = 'pago',
+             valor_total = ?,
+             id_endereco = ?,
+             pagseguro_checkout_id = ?,
+             pagseguro_reference_id = ?,
+             pagseguro_status = ?,
+             pagseguro_link = ?
+         WHERE id_compra = ?`,
+        [
+          pedido.valor_total,
+          endereco.id_endereco,
+          pagamento.id ?? null,
+          pagamento.reference_id ?? null,
+          pagamento.status ?? "APROVADO_FICTICIO",
+          pagamento.link_pagamento ?? null,
+          id_compra,
+        ],
       );
       setItens([]);
       Alert.alert(
         "Pedido confirmado! 🍷",
         `Total: R$ ${pedido.valor_total.toFixed(2)}`,
-        [{ text: "OK", onPress: () => navigation.goBack() }],
+        [{ text: "Ver pedidos", onPress: () => navigation.navigate("Pedidos") }],
       );
     } catch (err) {
       Alert.alert("Erro no pedido", err.message);
